@@ -104,10 +104,6 @@ def download_haddock(url_file):
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/a'))).click()
         download_run = driver.find_element(By.XPATH, '//*[@id="content"]/div[1]/p[2]/a[1]').get_attribute('href')
         urlretrieve(download_run, 'results/haddock/' + name + '.tgz')
-        '''# Plots
-        if rna.lower() in cas.lower():
-            download_plots = driver.find_element(By.XPATH, '//*[@id="graphics"]/a').get_attribute('href')
-            urlretrieve(download_plots, 'results/haddock/' + line + '_plots.tgz')'''
         driver.quit()
         display.stop()
 
