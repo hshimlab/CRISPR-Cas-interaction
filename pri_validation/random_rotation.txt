@@ -1,1 +1,2 @@
-
+The randomized cas angles are: 141 degrees, 45 degrees, 232 degrees
+The randomized rna_experimental angles are: 228 degrees, 157 degrees, 117 degrees
