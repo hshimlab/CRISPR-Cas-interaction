@@ -13,8 +13,8 @@ import pandas as pd
 from statistics import mean
 import shutil
 from pymol import cmd
+import json
 import __main__
-import code
 
 def find_previous_docking(save_filename):
     already_written = []
@@ -78,12 +78,10 @@ def find_name(filename, rotation):
     '''
     if rotation:        # Add rotation number
         postfix = filename.split('.')[0].split('_')[-1][-1]
-    else:
-        postfix = ''
-    if '_' in filename:
         name = filename.split('_')[0]
     else:
-        name = filename.split('.')[0]
+        postfix = ''
+    name = filename.split('.')[0]
     name += postfix
     return name 
 
@@ -99,11 +97,11 @@ def find_RNAfilename(cas_filename, rna_path, rotation, matching):
         rna_filename (str): the name of the session (eg. 5w1h)
     '''
     if matching:
-        rna_prefix = cas_filename.split('_')
         if rotation:
+            rna_prefix = cas_filename.split('_')
             rna_filename = rna_prefix[0] + '_rna_' + rna_prefix[2]
         else:
-            rna_filename = rna_prefix[0] + '_rna.pdb'
+            rna_filename = cas_filename
     else:
         rna_filename = rna_path.split("/")[-1]
     return rna_filename
@@ -134,13 +132,10 @@ def write_score(save_xlsx, best_score, rotation, index):
 def pymol_screenshot(pdb_files):
     __main__.pymol_argv = ['pymol', '-qei']    
     write_dir = '/'.join(pdb_files.split('/')[:-1]) + '/' + 'images'
-    '''if not os.path.isdir(write_dir):
-        os.makedirs(write_dir)'''
+    if not os.path.isdir(write_dir):
+        os.makedirs(write_dir)
     for pdb in os.listdir(pdb_files):
         name = pdb.split('.')[0]
-        '''if name not in ['5w1iABvs5W1I_shortRNAa','5w1iABvs5W1I_shortRNAb','5w1iCDvs5W1I_shortRNAa','5w1iCDvs5W1I_shortRNAb','7os0AFvs7OS0_shortRNAa','7os0AFvs7OS0_shortRNAb','7os0CDvs7OS0_shortRNAa','7os0CDvs7OS0_shortRNAb']:
-            continue'''
-        #code.interact(local = dict(globals(), **locals()))
         if pdb.split('.')[1] != 'pdb':
             continue
         cmd.load(pdb_files + '/' + pdb)
@@ -149,22 +144,22 @@ def pymol_screenshot(pdb_files):
         cmd.delete('all')
     cmd.quit()
 
-def unzip_pdb(tar_type, save_dir):
+def unzip_pdb(tar_type, save_dir, hdock=False):
     print('download complete')
     current_path = os.getcwd()
     os.chdir(save_dir)
-    if len(glob.glob('/*.tgz')) == 0:
+    if len(glob.glob('/*.' + tar_type)) == 0:
         os.system('for a in `ls -l *.' + tar_type + '`; do tar -zxvf $a --one-top-level; done')
-        os.system('rm *.tgz')
+        os.system('rm *.' + tar_type)
     result_dir = sorted(list(filter(os.path.isdir, os.listdir())))
-    #code.interact(local = dict(globals(), **locals()))
     os.chdir(current_path)
-    if 'PDB' in result_dir:
-        result_dir.remove('PDB')
-    else:
-        os.makedirs(save_dir + '/PDB')
-    if 'images' in result_dir:
-        result_dir.remove('images')
-    else:
-         os.makedirs(save_dir + '/images')
-    return result_dir
+    if not hdock:
+        if 'PDB' in result_dir:
+            result_dir.remove('PDB')
+        else:
+            os.makedirs(save_dir + '/PDB')
+        if 'images' in result_dir:
+            result_dir.remove('images')
+        else:
+            os.mkdirs(save_dir + '/images')
+        return result_dir
