@@ -20,8 +20,8 @@ def submit_job(write_name, cas_path, rna_path, url_file):
     # Disable cookies banner
     wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/a'))).click()
     # Login
-    driver.find_element(By.ID, 'email').send_keys('pyslucy@gmail.com')
-    driver.find_element(By.ID, 'password').send_keys('haddockpw01')
+    driver.find_element(By.ID, 'email').send_keys('')       # Need to add email
+    driver.find_element(By.ID, 'password').send_keys('')    # Need to add password
     driver.find_element(By.ID, 'remember_me').click()
     driver.find_element(By.ID, 'login').click()
     # Write details
@@ -35,10 +35,8 @@ def submit_job(write_name, cas_path, rna_path, url_file):
     # Continue button
     driver.find_element(By.XPATH, '//*[@id="submit"]').click()
     driver.implicitly_wait(180)
-    #code.interact(local = dict(globals(), **locals()))
     try:
         wait.until(EC.element_to_be_clickable((By.ID, 'submit'))).click()
-        #code.interact(local = dict(globals(), **locals()))
         # Choose parameters
         ranair = driver.find_element_by_id("ranair")
         driver.execute_script("arguments[0].click();", ranair)
@@ -49,15 +47,16 @@ def submit_job(write_name, cas_path, rna_path, url_file):
         driver.find_element(By.XPATH, '//*[@id="epsilon_1"]').send_keys('78.0')
         # Final submit button
         driver.find_element(By.ID, 'submit').click()
-        # Covid popup
+        # Close covid popup
         wait.until(EC.element_to_be_clickable((By.ID, 'covidConfirmNo'))).click()
         print(write_name + ',' + driver.current_url, file=url_file)
         print(driver.current_url)
         driver.close()
         display.stop()
     except:
+        # Haddock gives a lot of different errors based on the quality of the PDB files so the following block
+        # will note down these errors but not stop the docking run.
         print('enterting error')
-        #code.interact(local = dict(globals(), **locals()))
         error = driver.find_element(By.XPATH, '//*[@class="alert alert-danger"]')
         print('Error:' + error.text)
         print(write_name + ',' + ' '.join(error.text.split('\n')), file=url_file)
@@ -65,7 +64,19 @@ def submit_job(write_name, cas_path, rna_path, url_file):
         display.stop()
 
 def haddock_web(input_folders, save_filename, rotation=False, matching=False):
+    '''
+    Args
+    input_folders (list): a list of lists where the first list indicates the directories of the receptors 
+                          and the second list indicates the directories of the ligands.
+    save_filename (str): name of the file to save the queue page url.
+    rotation (bool): whether or not the data has been randomly rotated.
+    matching (bool): to dock the matching receptor and ligands (eg. 5W1H_A (Cas protein with 5W1H_B (crRNA))
+                     or to dock without matching the receptor and ligands.
+    '''
+    # Read in the saved file for the previous run with the same save_filename
+    # This allows to continue from the middle of the run if it has been interrupted (eg. by an error)
     already_written = find_previous_docking(save_filename)
+    # Make a dictionary of the paths to each PDB file
     paths_dict = make_paths_dict(input_folders)
     url_file = open(save_filename, 'a')
     for cas_value in paths_dict['cas'].values():
@@ -74,6 +85,7 @@ def haddock_web(input_folders, save_filename, rotation=False, matching=False):
             cas_name = find_name(cas_filename, rotation)
             for rna_key, rna_value in paths_dict['rna'].items():
                 for rna_path in rna_value:
+                    # Find the filename and path of the ligand that corresponds to the receptor
                     rna_filename = find_RNAfilename(cas_filename, rna_path, rotation, matching)
                     if matching and rna_filename not in rna_path:
                         continue
@@ -102,14 +114,23 @@ def download_haddock(url_file):
         # Disable cookies banner
         wait = WebDriverWait(driver, 30)
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/a'))).click()
+        # Get url of the results and download
         download_run = driver.find_element(By.XPATH, '//*[@id="content"]/div[1]/p[2]/a[1]').get_attribute('href')
         urlretrieve(download_run, 'results/haddock/' + name + '.tgz')
         driver.quit()
         display.stop()
 
-def haddock_write(url_file,save_xlsx, rotation=False, index=['']):
+def haddock_write(url_file, save_xlsx, rotation=False, index=['']):
+    '''
+    Args
+    url_file (str): name of the file that contains the urls of the queue page (same file as save_filename that was used in haddock_web).
+    save_xlsx (str): name of the excel file to save the docking scores to.
+    rotation (bool)
+    index (list): index for the docking score.
+    '''
     download_haddock(url_file)    
     result_dir = unzip_pdb('tgz', 'results/haddock')
+    # Dictionary to store the docking scores. Used to read in previous ones with the same save_xlsx so that the download can continue where it left off.
     best_score = save_bestscore(save_xlsx)
     for directory in result_dir:
         name, rna_type = directory.split('_')
@@ -143,6 +164,5 @@ def haddock_write(url_file,save_xlsx, rotation=False, index=['']):
     pymol_screenshot('results/haddock/PDB')
 
 if __name__ == '__main__':
-    #6e9f0
     #haddock_web([['data/random_rotation/cas'],['data/random_rotation/rna_experimental']], 'results/haddock/random_rotation.txt', True, True)
     haddock_write('results/haddock/random_rotation.txt', 'results/haddock/haddock_rr_results.xlsx', True, ['0','1','2'])

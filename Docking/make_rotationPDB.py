@@ -10,9 +10,8 @@ import code
 import random
 import code
 
-def random_rotation():
+def random_rotation(data_dir):
     __main__.pymol_argv = ['pymol', '-qei']
-    data_dir = '/home/yunseol/pri/data'
     directory_list = os.listdir(data_dir)
     directory_list.remove('random_rotation')
     directory_list.remove('func_rotationPDB.py')
@@ -25,7 +24,6 @@ def random_rotation():
         angle_list = [i for i in angle_list if i not in angles]
         write_file.write('The randomized ' + directory + ' angles are: {} degrees, {} degrees, {} degrees\n'.format(angles[0], angles[1], angles[2]))
         for filenames in os.listdir(directory):
-            #code.interact(local = dict(globals(), **locals()))
             for i, a in enumerate(angles):
                 cmd.load(directory + '/' + filenames)
                 com = cmd.centerofmass()
@@ -35,6 +33,5 @@ def random_rotation():
     write_file.close()
 
 if __name__ == '__main__':
-    random_rotation()
-
-
+    data_dir = '/home/yunseol/pri/data'
+    random_rotation(data_dir)
