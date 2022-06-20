@@ -21,9 +21,9 @@ The grep function of the FARFAR2 protocol selected the best model (in terms of M
 
 The best-RMSD and -MFE 3-D model was extracted with the extract_pdbs.static.linuxgccrelease function and saved with a filename of format S_000001 by -tags $TAG.
 
-```./rna_denovo.static.linuxgccrelease -sequence "cacuggugcaaauuugcacuagucuaaaacuccucgauuacauacacaaa" -secstruct ".(((((((((....)))))))))..........................." -minimize_rna true -out:file:silent 6iv9_rnashapes.out
+``` ./rna_denovo.static.linuxgccrelease -sequence "cacuggugcaaauuugcacuagucuaaaacuccucgauuacauacacaaa" -secstruct ".(((((((((....)))))))))..........................." -minimize_rna true -out:file:silent 6iv9_rnashapes.out
 
 grep "ˆSCORE:" 6iv9_rnashapes.out | grep -v description | sort -nk2 | head -n 500 | sort -nk24 | head -n 1 | awk '{print $NF}'
 
-./extract_pdbs.static.linuxgccrelease -in::file::silent 6iv9_rnashapes.out -tags $TAG```
+./extract_pdbs.static.linuxgccrelease -in::file::silent 6iv9_rnashapes.out -tags $TAG ```
 
