@@ -1,29 +1,52 @@
 # crRNA Structure Prediction
 
+## 2-D Prediction
+All 2-D predictions were made via their respective webservers.
+
 ## 3-D Prediction
+
+### RNAComposer
+3-D RNA structure prediction with RNAComposwer was done through webserver.
 
 ### Rosetta
 
-rosetta_bin_linux_2021.16.61629_bundle
+The Rosetta version 2021.16 was used.
 
-For RNA software combinations with Rosetta, the FARFAR2 protocol was applied. In the code for the RNA de novo function, Linuxgccrelease made it possible for Linux to read the given CRISPR RNA sequence.
+For more information on 3-D RNA structure prediction with Rosetta, read their paper ["FARFAR2: Improved De Novo Rosetta Prediction of Complex Global RNA Folds"](https://www.cell.com/structure/fulltext/S0969-2126(20)30180-5?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0969212620301805%3Fshowall%3Dtrue)
 
-```./rna_denovo.static.linuxgccrelease -sequence "[in vitro Cas13-interacting CRISPR RNA sequence]" -secstruct "[predicted 2-D structure]" -minimize_rna true -out:file:silent [5WLH_RNAfold+Rosetta].out```
+#### RNA de novo
+The RNA de novo function (linuxgccrelease) in the FARFAR2 protocol was used in the path ```main/source/bin``` inside the Rosetta package.
 
-The CRISPR RNA sequences of the experimentally validated dataset were given in place of the [in vitro Cas13-interacting CRISPR RNA sequence] box and the dot-bracket notation of the predicted 2-D structure in place of the [predicted 2-D structure] box. Rosetta is not implemented with RNA 2-D structure prediction software, so the dot-bracket prediction was obtained separately. With the minimize_rna function, the predicted RNA 3-D models were subjected to minimization in an all-atom scoring function used by the FARFAR2 protocol. The Rosetta file was given the desired name by out:file:silent (e.g. 5WLH_RNAfold+Rosetta).
+``./rna_denovo.static.linuxgccrelease -sequence "[in vitro Cas13-interacting CRISPR RNA sequence]" -secstruct "[predicted 2-D structure]" -minimize_rna true -out:file:silent [output file name].out``
 
+The RNA sequence is given in place of the **[in vitro Cas13-interacting CRISPR RNA sequence]** box and the dot-bracket notation of the predicted 2-D structure in place of the **[predicted 2-D structure]** box. We did not implement Rosetta with RNA 2-D structure prediction software, so the dot-bracket prediction was obtained separately. With the ``minimize_rna`` function, the predicted RNA 3-D models were subjected to minimization in an all-atom scoring function used by the FARFAR2 protocol. The Rosetta output was given through the filename, which is given in place of the **[output file name]** box.
 
-```grep "ˆSCORE:" [5WLH_RNAfold+Rosetta].out | grep -v description | sort -nk2 | head -n 500 | sort -nk24 | head -n 1 | awk '{print $NF}'```
+#### grep
 
-The grep function of the FARFAR2 protocol selected the best model (in terms of MFE and RMSD) of the ensemble of predicted CRISPR RNA 3-D structure models. In this code, grep -v description printed the scores of the predicted models without description. The sort -nk2 function sorted the models by total energy. Head -n 500 picked the top 500 models. This top 500 was then sorted by RMSD value with sort -nk24 and the best RNA 3-D structure was selected with head -n 1. With awk ‘{print $NF}’ the tag of this structure was printed.
+Then, the grep function of the FARFAR2 protocol selects the best model (in terms of MFE and RMSD) of the ensemble of predicted CRISPR RNA 3-D structure models.
 
-```./extract_pdbs.static.linuxgccrelease -in::file::silent[5WLH_RNAfold+Rosetta]```
+``grep "ˆSCORE:" [rnadenovo output file name].out | grep -v description | sort -nk2 | head -n 500 | sort -nk24 | head -n 1 | awk '{print $NF}'``
 
-The best-RMSD and -MFE 3-D model was extracted with the extract_pdbs.static.linuxgccrelease function and saved with a filename of format S_000001 by -tags $TAG.
+The name of the output file, obtained from the RNA de novo function, is provided in place of the ``[rnadenovo output file name]``.
 
-``` ./rna_denovo.static.linuxgccrelease -sequence "cacuggugcaaauuugcacuagucuaaaacuccucgauuacauacacaaa" -secstruct ".(((((((((....)))))))))..........................." -minimize_rna true -out:file:silent 6iv9_rnashapes.out
+``grep -v description`` prints the scores of the predicted models without description. ``sort -nk2`` sorts the models by total energy. ``Head -n 500`` picks the top 500 models, which are then sorted by RMSD value with ``sort -nk24``. Then the best RNA 3-D structure is selected with ``head -n 1``. With ``awk ‘{print $NF}’``, the tag of this structure is printed.
+
+#### Extract PDBs
+
+The extract PDBs function (linuxgccrelease) was used in the path ```main/source/bin``` inside the Rosetta package.
+
+```./extract_pdbs.static.linuxgccrelease -in::file::silent [rnadenovo output file name].out -tags $TAG```
+
+The best-RMSD and -MFE 3-D model was extracted and saved with a filename of format ``S_000001`` by ``-tags $TAG``.
+
+#### Example
+
+Example on 3-D structure precition of crRNA 6IV9 (chain B).
+
+```
+./rna_denovo.static.linuxgccrelease -sequence "cacuggugcaaauuugcacuagucuaaaacuccucgauuacauacacaaa" -secstruct ".(((((((((....)))))))))..........................." -minimize_rna true -out:file:silent 6iv9_rnashapes.out
 
 grep "ˆSCORE:" 6iv9_rnashapes.out | grep -v description | sort -nk2 | head -n 500 | sort -nk24 | head -n 1 | awk '{print $NF}'
 
-./extract_pdbs.static.linuxgccrelease -in::file::silent 6iv9_rnashapes.out -tags $TAG ```
-
+./extract_pdbs.static.linuxgccrelease -in::file::silent 6iv9_rnashapes.out -tags $TAG
+```
