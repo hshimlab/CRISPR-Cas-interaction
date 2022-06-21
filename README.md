@@ -8,7 +8,7 @@ RNA-protein interactions are crucial for diverse biological processes. In prokar
 - The details on 2-D and 3-D RNA prediction, specifically on 3-D structure prediction using Rosetta can be found. Other structure prediction programs are explained in our paper.
 
 #### 2. [`GT PDBs`](https://github.com/hshimlab/CRISPR-Cas-interaction/tree/main/GT_PDBs)
-- The GT PDBs from the Protein Data Bank can be found here.
+- The GT PDBs taken from the Protein Data Bank and have been cleaned (removed unwanted residues eg. water) can be found here.
 
 #### 3. [`GT_FASTA`](https://github.com/hshimlab/CRISPR-Cas-interaction/tree/main/GT_FASTA)
 - The fasta files of the GT from the Protein Data Bank can be found here, along with the shortened RNA sequences used in our experiments.
