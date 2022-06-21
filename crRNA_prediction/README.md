@@ -12,7 +12,7 @@ All 2-D predictions were made via their respective webservers.
 
 The Rosetta version 2021.16 was used.
 
-For more information on 3-D RNA structure prediction with Rosetta, read their paper ["FARFAR2: Improved De Novo Rosetta Prediction of Complex Global RNA Folds"](https://www.cell.com/structure/fulltext/S0969-2126(20)30180-5?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0969212620301805%3Fshowall%3Dtrue)
+For more information on 3-D RNA structure prediction with Rosetta, read their paper: ["FARFAR2: Improved De Novo Rosetta Prediction of Complex Global RNA Folds"](https://www.cell.com/structure/fulltext/S0969-2126(20)30180-5?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0969212620301805%3Fshowall%3Dtrue)
 
 #### RNA de novo
 The RNA de novo function (linuxgccrelease) in the FARFAR2 protocol was used in the path ```main/source/bin``` inside the Rosetta package.
