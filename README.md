@@ -31,11 +31,21 @@ In prokaryotes, RNA-protein interactions enable adaptive immunity through CRISPR
 Readers may use the following information to cite our research and dataset.
 
 ```
-citation
+Park, H. M. et al. (2022). In silico optimization of RNA-protein interactions for CRISPR-Cas13-based antimicrobials. bioRxiv. doi:10.1101/2022.06.21.496952
 ```
 
 ```
-bibtex citation
+@article {Park2022.06.21.496952,
+	author = {Park, Ho-min and Park, Yunseol and Berani, Urta and Bang, Eunkyu and Vankerschaver, Joris and Van Messem, Arnout and De Neve, Wesley and Shim, Hyunjin},
+	title = {In silico optimization of RNA-protein interactions for CRISPR-Cas13-based antimicrobials},
+	elocation-id = {2022.06.21.496952},
+	year = {2022},
+	doi = {10.1101/2022.06.21.496952},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/early/2022/06/21/2022.06.21.496952},
+	eprint = {https://www.biorxiv.org/content/early/2022/06/21/2022.06.21.496952.full.pdf},
+	journal = {bioRxiv}
+}
 ```
 
 **Contributors**:
